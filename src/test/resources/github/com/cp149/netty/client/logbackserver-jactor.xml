@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+	<appender name="Countout" class="github.com.cp149.CountAppender" />
+	<appender name="RollingFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/logback-server-netty%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>10</maxHistory>
+		</rollingPolicy>
+		
+		
+		<encoder>
+			<pattern>%d %-5p [%t] %c [%F:%L] - %msg%n</pattern>
+			<immediateFlush>false</immediateFlush>
+		</encoder>
+	</appender>
+	<appender name="ASYNC" class="github.com.cp149.jactor.JactorAppender">		
+		<appender-ref ref="Countout" />
+		<appender-ref ref="RollingFile" />
+	</appender>
+
+	<logger name="github.com.cp149" level="DEBUG">
+		<appender-ref ref="ASYNC" />
+	</logger>
+	<root level="ERROR">		
+	</root>
+</configuration>

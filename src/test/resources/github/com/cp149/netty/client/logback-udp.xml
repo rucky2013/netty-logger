@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+	
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %p [%t] %c [%F:%L] - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<appender name="Countout" class="github.com.cp149.CountAppender" />
+	
+	<appender name="janetty"
+		class="github.com.cp149.netty.client.NettyUdpAppender">
+		<remoteHost>localhost</remoteHost>
+		<port>4570</port>
+		<appender-ref ref="STDOUT" />
+		<connectatstart>false</connectatstart>
+		<channelSize>1</channelSize>
+	</appender>
+		
+	
+	
+	
+
+	<logger name="github.com.cp149.netty.client" level="DEBUG">
+		<appender-ref ref="janetty" />
+		<appender-ref ref="Countout" />
+		
+	</logger>	
+	
+	<root level="ERROR">
+		
+	<!-- 
+		<appender-ref ref="ASYNC" />
+		<appender-ref ref="ASYNCFile" />
+	 -->	
+	</root>
+</configuration>
