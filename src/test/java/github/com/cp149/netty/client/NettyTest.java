@@ -1,6 +1,5 @@
 package github.com.cp149.netty.client;
 
-import github.com.cp149.CountAppender;
 import github.com.cp149.netty.server.NettyappenderServer;
 
 import java.io.File;
@@ -61,16 +60,16 @@ public class NettyTest {
 		// run client
 		new MvnCommandexe().executeCommands("mvn.bat", testclass, "test");
 		// check log lines
-		int totallogs = CountAppender.count.intValue();
+		int totallogs = Testutils.countlines(logfilename);
 
 		while (totallogs < expecttotal) {
-			totallogs = CountAppender.count.intValue();
+			totallogs = Testutils.countlines(logfilename);
 			TimeUnit.SECONDS.sleep(2);
 			System.out.println(this.getClass().getSimpleName() + " current lines =" + totallogs + " expert " + expecttotal);
 		}
 		System.out.println(Thread.currentThread().getStackTrace()[1] + "last total=" + totallogs);
 		// CountAppender's count should equal expect total
-		Assert.assertEquals(CountAppender.count.intValue(), expecttotal);
+//		Assert.assertEquals(CountAppender.count.intValue(), expecttotal);
 		//
 		Assert.assertEquals(Testutils.countlines(logfilename), expecttotal);
 
