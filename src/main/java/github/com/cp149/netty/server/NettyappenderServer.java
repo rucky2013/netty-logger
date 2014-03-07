@@ -16,16 +16,23 @@
 package github.com.cp149.netty.server;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.marshalling.CompatibleMarshallingDecoder;
+import io.netty.handler.codec.marshalling.CompatibleMarshallingEncoder;
 import io.netty.handler.codec.marshalling.MarshallingDecoder;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.CompatibleObjectEncoder;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 
@@ -60,17 +67,21 @@ public class NettyappenderServer {
 
 		try {			
 			bootstrap = new ServerBootstrap();
-			final EventExecutorGroup executor = new DefaultEventExecutorGroup(8);
+			final EventExecutorGroup executor = new DefaultEventExecutorGroup(16);
 
 			bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-			.option(ChannelOption.SO_KEEPALIVE, true)
-					.option(ChannelOption.TCP_NODELAY, true).option(ChannelOption.SO_RCVBUF, 436900)
-					.option(ChannelOption.SO_SNDBUF, 2048)
+			.childOption(ChannelOption.SO_KEEPALIVE, true)
+					.childOption(ChannelOption.TCP_NODELAY, true).childOption(ChannelOption.SO_RCVBUF, 65535)
+					.childOption(ChannelOption.SO_SNDBUF, 2048).childOption(ChannelOption.SO_REUSEADDR,true) //reuse address
+					.childOption(ChannelOption.ALLOCATOR,new PooledByteBufAllocator(false))// heap buf 's better					
 					.childHandler(new ChannelInitializer<SocketChannel>() {
 						
 						@Override
 						public void initChannel(SocketChannel ch) throws Exception {
 //							ch.pipeline().addLast( new MarshallingEncoder(MarshallUtil.createProvider()));
+//							ch.pipeline().addLast(new CompatibleObjectDecoder());
+//							ch.pipeline().addLast(new ObjectEncoder(),
+//		                            new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
 							ch.pipeline().addLast(new MarshallingDecoder(MarshallUtil.createUnProvider()));
 							
 							ch.pipeline().addLast(executor, new NettyappenderServerHandler());

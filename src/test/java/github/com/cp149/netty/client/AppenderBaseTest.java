@@ -19,6 +19,7 @@ import ch.qos.logback.core.joran.spi.JoranException;
 
 public class AppenderBaseTest {
 	public static final int WARMLOGSIZE = 100;
+	public static final int testThreads = 100;
 	// logback config file
 	protected String LOGBACK_XML = "logback.xml";
 	// log out put file
@@ -27,8 +28,8 @@ public class AppenderBaseTest {
 	protected int sizeBeforTest = 0;
 
 	protected org.slf4j.Logger logback = LoggerFactory.getLogger(this.getClass());
-	private Logger debuglog = LoggerFactory.getLogger("test.info");
-	private LoggerContext lc;
+	protected Logger debuglog = LoggerFactory.getLogger("test.info");
+	protected LoggerContext lc;
 
 	// test start time ,
 	protected long starttime;
@@ -62,7 +63,7 @@ public class AppenderBaseTest {
 
 	}
 
-	private void configureLC() throws JoranException {
+	protected void configureLC() throws JoranException {
 		lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 		String configFile = this.getClass().getResource("").getFile() + File.separator + LOGBACK_XML;
 		JoranConfigurator configurator = new JoranConfigurator();
@@ -71,18 +72,18 @@ public class AppenderBaseTest {
 		configurator.doConfigure(configFile);
 	}
 
-	@AfterClass(timeOut = 50000, alwaysRun = true)
-	public void afteclass() throws Exception {
+	@AfterClass(timeOut = 150000, alwaysRun = true)
+	public void afteclass() throws Exception {				
 		// get total test run time
 		long runtime = System.currentTimeMillis() - starttime;
 		debuglog.debug(this.getClass().getSimpleName() + " thread run over time=" + runtime);
-		int expectlines = 100 * loglines + WARMLOGSIZE;
+		int expectlines = testThreads * loglines + WARMLOGSIZE;
 		// get total log
 		int fileline = Testutils.countlines(filename) - sizeBeforTest;
 		while (fileline< expectlines) {
 			TimeUnit.MILLISECONDS.sleep(300);
 			fileline= Testutils.countlines(filename) - sizeBeforTest;
-			debuglog.debug(this.getClass().getSimpleName() + "current lines time=" + fileline+"-"+CountAppender.count.intValue());
+			debuglog.debug(this.getClass().getSimpleName() + "current lines time=" + fileline+"-"+expectlines);
 		}
 		// get the write time
 		debuglog.debug(this.getClass().getSimpleName() + " total  time=" + (System.currentTimeMillis() - starttime) + " total lines="

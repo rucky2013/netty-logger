@@ -15,8 +15,7 @@ import ch.qos.logback.classic.spi.LoggingEventVO;
 public class NettyappenderServerHandler extends SimpleChannelInboundHandler<Serializable> {
 
 	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(NettyappenderServerHandler.class);
-	private static final LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-
+	private static final LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();	
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable e) {
 		// Close the connection when an exception is raised.

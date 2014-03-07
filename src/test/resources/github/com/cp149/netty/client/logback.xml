@@ -21,8 +21,7 @@
 	<appender name="Countout" class="github.com.cp149.CountAppender" />		
  
 	<logger name="github.com.cp149.netty.client" level="DEBUG">
-		<appender-ref ref="jasocket" />
-		<appender-ref ref="Countout" />		
+		<appender-ref ref="jasocket" />			
 	</logger>
 	<logger name="test.info"  level="DEBUG" additivity="false" >				
 		<appender-ref ref="STDOUT" />

@@ -31,7 +31,7 @@
 		<appender-ref ref="RollingFile" />
 	</appender>
 	<logger name="github.com.cp149.netty" level="DEBUG" >
-		<appender-ref ref="RollingFile" />				
+		<appender-ref ref="ASYNCFile" />				
 	</logger>
 	
 	<root level="ERROR">
