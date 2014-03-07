@@ -24,10 +24,17 @@ public class Netty4Appender extends NetAppenderBase<ILoggingEvent> {
 	protected Bootstrap bootstrap = null;
 	protected EventLoopGroup group;
 
-	protected Channel channel = null;
-
+	
+	protected int channelSize = 1;
+	protected Channel[] channelList;
 	ChannelFuture lastWriteFuture = null;
+	int channelid = 0;
 
+	protected Channel getChannel() {
+		channelid=(channelid+1)%channelSize;
+		return channelList[channelid];
+		// return channel;
+	}
 	@Override
 	protected void append(ILoggingEvent eventObject) {
 		try {
@@ -40,7 +47,7 @@ public class Netty4Appender extends NetAppenderBase<ILoggingEvent> {
 				final Serializable serEvent = getPST().transform(eventObject);
 				// if connect write to server
 				try {
-
+					Channel channel=getChannel();
 					if (channel != null && channel.isOpen()) {
 
 						lastWriteFuture = channel.writeAndFlush(serEvent);
@@ -133,8 +140,19 @@ public class Netty4Appender extends NetAppenderBase<ILoggingEvent> {
 					});
 
 			
-				channel = bootstrap.connect().syncUninterruptibly().channel();
-			
+			channelList = new Channel[channelSize];
+			for (int i = 0; i < channelSize; i++) {
+				ChannelFuture future;
+				try {
+					future = bootstrap.connect().sync();
+					Channel channel = future.channel();
+					channelList[i] = channel;
+				} catch (InterruptedException e) {
+					
+					addError(e.getMessage());
+				}
+				
+			}		
 
 		}
 
@@ -146,6 +164,8 @@ public class Netty4Appender extends NetAppenderBase<ILoggingEvent> {
 		return pst;
 	}
 
-	
+	public void setChannelSize(int channelSize) {
+		this.channelSize = channelSize;
+	}
 
 }
