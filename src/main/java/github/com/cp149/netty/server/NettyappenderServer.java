@@ -67,7 +67,7 @@ public class NettyappenderServer {
 
 		try {			
 			bootstrap = new ServerBootstrap();
-			final EventExecutorGroup executor = new DefaultEventExecutorGroup(16);
+			final EventExecutorGroup executor = new DefaultEventExecutorGroup(4);
 
 			bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
 			.childOption(ChannelOption.SO_KEEPALIVE, true)

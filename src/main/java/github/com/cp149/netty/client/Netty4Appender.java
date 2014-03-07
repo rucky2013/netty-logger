@@ -32,8 +32,7 @@ public class Netty4Appender extends NetAppenderBase<ILoggingEvent> {
 
 	protected Channel getChannel() {
 		channelid=(channelid+1)%channelSize;
-		return channelList[channelid];
-		// return channel;
+		return channelList[channelid];		
 	}
 	@Override
 	protected void append(ILoggingEvent eventObject) {
@@ -115,7 +114,7 @@ public class Netty4Appender extends NetAppenderBase<ILoggingEvent> {
 					// .option(ChannelOption.TCP_NODELAY, true)
 					.option(ChannelOption.SO_KEEPALIVE, true)
 					// .option(ChannelOption.SO_RCVBUF, 20)
-					.option(ChannelOption.SO_SNDBUF, 0)
+//					.option(ChannelOption.SO_SNDBUF, 0)
 					.remoteAddress(new InetSocketAddress(address, port))
 					.handler(new ChannelInitializer<NioSocketChannel>() {
 						@Override
